@@ -1,2 +1,6 @@
+# 1.0.1
+- Fix a crash
+- Fix a bug where blocks don't save
+
 # 1.0.0
 - Initial Release.

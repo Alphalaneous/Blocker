@@ -1,5 +1,6 @@
 #include "BlockPopup.hpp"
 #include "BlockManager.hpp"
+#include "Enums.hpp"
 #include "UserCell.hpp"
 
 using namespace alpha::blocker;
@@ -151,7 +152,16 @@ bool BlockPopup::init() {
     m_mainLayer->addChild(buttonNode);
 
     m_refreshButton = Button::createWithSpriteFrameName("GJ_updateBtn_001.png", [this] (auto sender) {
-        refreshProfilePage();
+        if (m_page == BlockType::Profiles) {
+            refreshProfilePage();
+        }
+        else {
+            auto& page = m_pages[m_page];
+            page.clear();
+
+            loadPageUsers(m_page);
+            refreshPage();
+        }
     });
     m_refreshButton->setPosition({m_size.width - 10, 12});
     m_refreshButton->setID("refresh-button");
@@ -236,27 +246,15 @@ void BlockPopup::refreshProfilePage() {
 }
 
 void BlockPopup::removeUser(unsigned int accountID) {
-    switch (m_page) {
-        case BlockType::Profiles: {
-            GameLevelManager::get()->unblockUser(accountID);
-            break;
-        }
-        case BlockType::Comments: {
-            auto& page = m_pages[m_page];
-            page.erase(accountID);
-
-            refreshPage();
-            break;
-        }
-        case BlockType::Levels: {
-            auto& page = m_pages[m_page];
-            page.erase(accountID);
-
-            refreshPage();
-            break;
-        }
+    if (m_page == BlockType::Profiles) {
+        GameLevelManager::get()->unblockUser(accountID);
     }
 
+    auto& page = m_pages[m_page];
+    page.erase(accountID);
+
+    refreshPage();
+    
     BlockManager::get()->removeUser(m_page, accountID);
 }
 
@@ -284,7 +282,6 @@ void BlockPopup::refreshPage() {
     m_errorLabel->setVisible(false);
     m_loadingSpinner->setVisible(false);
 
-    m_refreshButton->setVisible(m_page == BlockType::Profiles);
     if (m_page == BlockType::Profiles) {
         if (m_hadError) m_errorLabel->setVisible(true);
         if (m_loading) m_loadingSpinner->setVisible(true);

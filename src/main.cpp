@@ -43,7 +43,7 @@ class $modify(MyBoomListView, BoomListView) {
 class $modify(MyGameLevelManager, GameLevelManager) {
     void onUnblockUserCompleted(gd::string response, gd::string tag) {
 		if (auto profile = typeinfo_cast<ProfilePage*>(m_userInfoDelegate)) {
-			profile->onUpdate(nullptr);
+			if (!profile->m_ownProfile) profile->onUpdate(nullptr);
 		}
 	}
 };
@@ -64,7 +64,7 @@ class $modify(MyFriendsProfilePage, FriendsProfilePage) {
 class $modify(MyProfilePage, ProfilePage) {
 
 	struct Fields {
-		Button* m_blockButton = nullptr;
+		Ref<Button> m_blockButton = nullptr;
 	};
 
 	void setupBlockButton() {
@@ -72,6 +72,7 @@ class $modify(MyProfilePage, ProfilePage) {
 		if (fields->m_blockButton) {
 			fields->m_blockButton->removeFromParent();
 		}
+		
 		fields->m_blockButton = Button::createWithSpriteFrameName("accountBtn_blocked_001.png", [this] (auto sender) {
 			onBlockUser(nullptr);
 		});
@@ -82,6 +83,16 @@ class $modify(MyProfilePage, ProfilePage) {
 
 		m_mainLayer->addChild(fields->m_blockButton);
 	}
+	
+    bool init(int accountID, bool ownProfile) {
+		if (!ProfilePage::init(accountID, ownProfile)) return false;
+		auto bottomMenu = m_mainLayer->getChildByID("bottom-menu");
+
+		if (!bottomMenu && !ownProfile) {
+			setupBlockButton();
+		}
+		return true;
+	}
 
     void getUserInfoFailed(int id) {
 		ProfilePage::getUserInfoFailed(id);
@@ -90,6 +101,7 @@ class $modify(MyProfilePage, ProfilePage) {
 	
     void userInfoChanged(GJUserScore* score) {
 		ProfilePage::userInfoChanged(score);
+
 		if (score->m_friendReqStatus == 2) {
 			setupBlockButton();
 		}
@@ -105,6 +117,7 @@ class $modify(MyProfilePage, ProfilePage) {
 		if (!m_ownProfile) return;
 
 		auto bottomMenu = m_mainLayer->getChildByID("bottom-menu");
+		if (!bottomMenu) return;
 
 		auto btn = CCMenuItemExt::createSpriteExtraWithFrameName("accountBtn_blocked_001.png", 1, [this] (auto sender) {
 			onClose(nullptr);
