@@ -14,27 +14,29 @@ using namespace alpha::blocker;
 class $modify(MyBoomListView, BoomListView) {
 
     bool init(cocos2d::CCArray* entries, TableViewCellDelegate* delegate, float height, float width, int page, BoomListType type, float y) {
-		CCArray* entriesToRemove = CCArray::create();
-			
-		for (auto entry : entries->asExt()) {
-			if (auto level = typeinfo_cast<GJGameLevel*>(entry)) {
-				if (BlockManager::get()->isBlocked(BlockType::Levels, level->m_accountID)) {
-					entriesToRemove->addObject(entry);
-				}
-			}
-			if (auto level = typeinfo_cast<GJLevelList*>(entry)) {
-				if (BlockManager::get()->isBlocked(BlockType::Levels, level->m_accountID)) {
-					entriesToRemove->addObject(entry);
-				}
-			}
-			if (auto comment = typeinfo_cast<GJComment*>(entry)) {
-				if (BlockManager::get()->isBlocked(BlockType::Comments, comment->m_accountID)) {
-					entriesToRemove->addObject(entry);
-				}
-			}
-		}
+		if (entries) {
+			CCArray* entriesToRemove = CCArray::create();
 
-		entries->removeObjectsInArray(entriesToRemove);
+			for (auto entry : entries->asExt()) {
+				if (auto level = typeinfo_cast<GJGameLevel*>(entry)) {
+					if (BlockManager::get()->isBlocked(BlockType::Levels, level->m_accountID)) {
+						entriesToRemove->addObject(entry);
+					}
+				}
+				if (auto level = typeinfo_cast<GJLevelList*>(entry)) {
+					if (BlockManager::get()->isBlocked(BlockType::Levels, level->m_accountID)) {
+						entriesToRemove->addObject(entry);
+					}
+				}
+				if (auto comment = typeinfo_cast<GJComment*>(entry)) {
+					if (BlockManager::get()->isBlocked(BlockType::Comments, comment->m_accountID)) {
+						entriesToRemove->addObject(entry);
+					}
+				}
+			}
+
+			entries->removeObjectsInArray(entriesToRemove);
+		}
 
 		return BoomListView::init(entries, type, width, height);
 	}
@@ -54,7 +56,10 @@ class $modify(MyFriendsProfilePage, FriendsProfilePage) {
 		if (!FriendsProfilePage::init(type)) return false;
 
 		auto topRightMenu = m_mainLayer->getChildByID("top-right-menu");
+		if (!topRightMenu) return true;
+		
 		auto blockedBtn = topRightMenu->getChildByID("blocked-button");
+		if (!blockedBtn) return true;
 		blockedBtn->setVisible(false);
 
 		return true;

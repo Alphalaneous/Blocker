@@ -1,3 +1,6 @@
+# 1.0.2
+- Fix a crash when opening friend requests
+
 # 1.0.1
 - Fix a crash
 - Fix a bug where blocks don't save
