@@ -38,12 +38,13 @@ class $modify(MyBoomListView, BoomListView) {
 			entries->removeObjectsInArray(entriesToRemove);
 		}
 
-		return BoomListView::init(entries, type, width, height);
+		return BoomListView::init(entries, delegate, height, width, page, type, y);
 	}
 };
 
 class $modify(MyGameLevelManager, GameLevelManager) {
     void onUnblockUserCompleted(gd::string response, gd::string tag) {
+		GameLevelManager::onUnblockUserCompleted(response, tag);
 		if (auto profile = typeinfo_cast<ProfilePage*>(m_userInfoDelegate)) {
 			if (!profile->m_ownProfile) profile->onUpdate(nullptr);
 		}
@@ -54,6 +55,8 @@ class $modify(MyFriendsProfilePage, FriendsProfilePage) {
 
     bool init(UserListType type) {
 		if (!FriendsProfilePage::init(type)) return false;
+
+		PlayerObject a;
 
 		auto topRightMenu = m_mainLayer->getChildByID("top-right-menu");
 		if (!topRightMenu) return true;

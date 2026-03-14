@@ -1,3 +1,6 @@
+# 1.0.3
+- Fix a bug where adding to or rearranging lists was broken
+
 # 1.0.2
 - Fix a crash when opening friend requests
 

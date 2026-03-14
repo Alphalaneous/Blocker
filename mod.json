@@ -8,7 +8,7 @@
 	},
 	"id": "alphalaneous.blocker",
 	"name": "Blocker",
-	"version": "v1.0.2",
+	"version": "v1.0.3",
 	"developer": "Alphalaneous",
 	"description": "Block people in more ways",
 	"dependencies": {
