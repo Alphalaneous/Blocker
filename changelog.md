@@ -1,3 +1,6 @@
+# 1.0.4
+- Fix a crash lol
+
 # 1.0.3
 - Fix a bug where adding to or rearranging lists was broken
 

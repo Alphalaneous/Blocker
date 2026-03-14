@@ -56,8 +56,6 @@ class $modify(MyFriendsProfilePage, FriendsProfilePage) {
     bool init(UserListType type) {
 		if (!FriendsProfilePage::init(type)) return false;
 
-		PlayerObject a;
-
 		auto topRightMenu = m_mainLayer->getChildByID("top-right-menu");
 		if (!topRightMenu) return true;
 		
